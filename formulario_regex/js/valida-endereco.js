@@ -6,35 +6,70 @@ O CEP (Código de Endereçamento Postal) deve estar presente e seguir o formato 
  */
 
 export function enderecoEhValido() {
-  const regex = /^[0-9A-Za-zÀ-ÿ]*(?: [0-9A-Za-zÀ-ÿ]+)+, [0-9A-Z]+, CEP \d{5}-\d{3}$/gm;
+  const regexErrado = /^[0-9A-Za-zÀ-ÿ]*(?: [0-9A-Za-zÀ-ÿ]+)+, [0-9A-Z]+, CEP \d{5}-\d{3}$/gm;
+
+  // When you use .test() with the g flag, the regex object maintains a lastIndex property, meaning the second time you call it, it starts searching from where the first match ended.
+
+  const regexCerto = /^[0-9A-Za-zÀ-ÿ]*(?: [0-9A-Za-zÀ-ÿ]+)+, [0-9A-Z]+, CEP \d{5}-\d{3}$/m;
+
+  const regexIA = /^[0-9A-Za-zÀ-ÿ]+(?: [0-9A-Za-zÀ-ÿ]+)+, \d+[A-Za-z]?, CEP \d{5}-\d{3}$/m;
+
+  const regexConjunto =
+    /^(?:[0-9]+[o|a|º|ª|°]\s)?[A-Za-zÀ-ÿ]+(?:\s[0-9A-Za-zÀ-ÿ]+)*,\s\d+[A-Za-z]?,\sCEP\s\d{5}-\d{3}$/m;
+
+  const superRegex =
+    /^(?:(?:[0-9]+[o|a|º|ª|°])|[A-Za-zÀ-ÿ]+)(?:\s[0-9A-Za-zÀ-ÿ]+)+,\s(?:\d+[A-Za-z]?|s\/n),\sCEP\s\d{5}-\d{3}$/m;
+
+  const superRegex2 =
+    /^(?:(?:[0-9]+[o|a|º|ª|°])|[A-Za-zÀ-ÿ]+\W?)(?:\s[0-9A-Za-zÀ-ÿ]+)+,\s(?:\d+[A-Za-z]?|s\/n),\sCEP\s\d{5}-\d{3}$/m;
 
   const enderecos = [
+    "Rua 15 de Setembro, 123, CEP 60321-105",
+    "R 15 de Setembro, 123, CEP 60321-105",
+    "R. 15 de Setembro, 123, CEP 60321-105",
     "Rua das Flores, 123, CEP 60321-105",
+    "Rua das Flores, A123, CEP 60321-105",
     "Avenida Brasil, 456A, CEP 16945-017",
+    "1Avenida Brasil, 456A, CEP 16945-017",
+    "1ª Travessa, 111, CEP 11111-111",
+    "13ª Travessa, 111, CEP 11111-111",
     "Travessa dos Santos, 101, CEP 12345-678",
+    "Travessa dos  Santos, 101, CEP 12345-678",
+    "Lote Q549B, 0, CEP 34526-098",
+    "Lote 549B, s/n, CEP 34526-098",
     "Rua sem número 17845-698",
     "Rua dos Sonhos, 12B, CEP 12345678",
     "Rua, 123, CEP 60321-105",
   ];
 
-  const testeRegex0 = regex.test(enderecos[0]);
-  const testeRegex1 = regex.test(enderecos[1]);
-  const testeRegex2 = regex.test(enderecos[2]);
-  const testeRegex3 = regex.test(enderecos[3]);
-  const testeRegex4 = regex.test(enderecos[4]);
-  const testeRegex5 = regex.test(enderecos[5]);
+  const todosOsRegex = { regexErrado, regexCerto, regexIA, regexConjunto, superRegex, superRegex2 };
 
-  console.log("enderecos[1]:", enderecos[1], testeRegex1);
+  const listaRegex = Object.entries(todosOsRegex);
 
-  console.log("enderecos[0]:", enderecos[0], testeRegex0);
-  console.log("enderecos[1]:", enderecos[1], testeRegex1);
-  console.log("enderecos[2]:", enderecos[2], testeRegex2);
-  console.log("enderecos[3]:", enderecos[3], testeRegex3);
-  console.log("enderecos[4]:", enderecos[4], testeRegex4);
-  console.log("enderecos[5]:", enderecos[5], testeRegex5);
+  listaRegex.forEach(([nome, regex]) => {
+    console.log(`\n--- Regex: ${nome} ---`);
 
-  //   enderecos.forEach((endereco) => {
-  //     let testeRegex = regex.test(endereco);
-  //     console.log(endereco, ":", testeRegex);
-  //   });
+    enderecos.forEach((endereco) => {
+      let testeRegex = regex.test(endereco);
+      console.log(endereco, ":", testeRegex);
+    });
+  });
+
+  // começa com ordinal (2ª) ou com palavra sem número (rua, avenida)
+
+  const ordinalInicioLogradouro = /(?:[0-9]+[o|a|º|ª|°])/;
+
+  console.log("source", ordinalInicioLogradouro.source);
+
+  const inicioLogradouro = /(?:(?:[0-9]+[o|a|º|ª|°])|[A-Za-zÀ-ÿ]+\W?)/;
+
+  // depois recebe pelo menos uma palavra, com ou sem número, e cada palavra é precedida de espaço
+
+  const restanteLogradouro = /(?:\s[0-9A-Za-zÀ-ÿ]+)+/;
+
+  // número pode ter letra no final, ou pode ser 's/n'
+
+  const numero = /(?:\d+[A-Za-z]?|s\/n)/;
+
+  const cep = /\d{5}-\d{3}/;
 }

@@ -1,6 +1,7 @@
 import ehUmCPF from "./valida-cpf.js";
 import ehMaiorDeIdade from "./valida-idade.js";
 import ehUmNome from "./valida-nome.js";
+import { enderecoEhValido } from "./valida-endereco.js";
 
 const camposDoFormulario = document.querySelectorAll("[required]");
 const formulario = document.querySelector("[data-formulario]");
@@ -82,3 +83,5 @@ function verificaCampo(campo) {
     mensagemErro.textContent = "";
   }
 }
+
+enderecoEhValido();

@@ -1,9 +1,11 @@
 function removePontuacao(campo) {
-  return campo.value.replace(/\.|-/g, "");
+  const regex = /\.|\-|\s|\//g;
+  return campo.value.replace(regex, "");
 }
 
 function todosDigitosIguais(cpf) {
-  return /^(\d)\1{10}$/.test(cpf);
+  const regex = /^(\d)\1{10}$/;
+  return regex.test(cpf);
 }
 
 //Função que calcula o Dígito verificador do CPF
@@ -39,5 +41,8 @@ export default function ehUmCPF(campo) {
     console.log("Dígitos iguais:", todosDigitosIguais(cpfSemPontuacao));
     console.log("CPF sem pontuação:", cpfSemPontuacao);
     campo.setCustomValidity("Esse CPF não é válido");
+    return;
   }
+
+  console.log(cpfSemPontuacao, "é válido");
 }
